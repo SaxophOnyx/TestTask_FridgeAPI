@@ -7,10 +7,10 @@ namespace FridgeAPI.Domain.Contracts.DataTransferObjects.Request
     public class FridgeToCreate
     {
         [Required(ErrorMessage = "Name is a required field")]
-        public string? Name { get; set; }
+        public string Name { get; set; }
 
         [Required(ErrorMessage = "Owner name is a required field")]
-        public string? OwnerName { get; set; }
+        public string OwnerName { get; set; }
 
         [GuidValidation]
         public Guid? ModelId { get; set; }
