@@ -1,30 +1,39 @@
-﻿using FridgeAPI.Entities.DatabaseAccess.Abstractions;
-using FridgeAPI.Entities.Models;
+﻿using FridgeAPI.Domain.Contracts.Exceptions;
+using FridgeAPI.Domain.Contracts.Interfaces.Repositories;
+using FridgeAPI.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Tests.Mocks
 {
-    internal class FridgeModelRepositoryMock : IFridgeModelRepository
+    public class FridgeModelRepositoryMock : IFridgeModelRepository
     {
-        private List<FridgeModel> _fridgeModels;
+        public List<FridgeModel> Entries { get; }
 
 
         public FridgeModelRepositoryMock(List<FridgeModel> models)
         {
-            _fridgeModels = models;
+            Entries = models;
         }
 
 
-        public FridgeModel GetModel(Guid modelId)
+        public Task<IEnumerable<FridgeModel>> GetFridgeModelsAsync()
         {
-            return _fridgeModels.FirstOrDefault(m => m.Id == modelId);
+            return Task.FromResult(Entries.AsEnumerable());
         }
 
-        public IEnumerable<FridgeModel> GetModels()
+        public Task<FridgeModel> GetFridgeModelAsync(Guid id)
         {
-            return _fridgeModels;
+            try
+            {
+                return Task.FromResult(Entries.Single(m => m.Id == id));
+            }
+            catch
+            {
+                throw new EntityNotFoundException(id, $"Fridge model with id {id} not found");
+            }
         }
     }
 }

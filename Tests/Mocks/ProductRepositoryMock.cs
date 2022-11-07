@@ -1,67 +1,60 @@
-﻿using FridgeAPI.Entities.DatabaseAccess.Abstractions;
-using FridgeAPI.Entities.Models;
+﻿using FridgeAPI.Domain.Contracts.Exceptions;
+using FridgeAPI.Domain.Contracts.Interfaces.Repositories;
+using FridgeAPI.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Tests.Mocks
 {
-    internal class ProductRepositoryMock : IProductRepository
+    public class ProductRepositoryMock : IProductRepository
     {
-        private List<Product> _products;
+        public List<Product> Entries { get; }
 
 
         public ProductRepositoryMock(List<Product> products)
         {
-            _products = products;
+            Entries = products;
         }
 
-
-        public Product GetProduct(Guid productId)
+        public Task<List<Product>> AddProductsAsync(List<Product> products)
         {
-            return _products.Find(p => p.Id == productId);
+            products.ForEach(p => p.Id = Guid.NewGuid());
+            Entries.AddRange(products);
+            return Task.FromResult(products);
         }
 
-        public IEnumerable<Product> GetProducts()
+        public Task DeleteProductAsync(Guid id)
         {
-            return _products;
+            var entry = Entries.FirstOrDefault(p => p.Id == id);
+
+            if (entry != null)
+                Entries.Remove(entry);
+            return Task.CompletedTask;
         }
 
-        public List<Product> GetProductCollectionDeepcopy()
+        public Task<Product> GetProductAsync(Guid id)
         {
-            var list = new List<Product>();
-
-            foreach (var p in _products)
+            try
             {
-                var product = new Product()
-                {
-                    Id = p.Id,
-                    Name = p.Name,
-                    DefaultQuantity = p.DefaultQuantity
-                };
-
-                list.Add(product);
+                var entry = Entries.Single(p => p.Id == id);
+                return Task.FromResult(entry);
             }
-
-            return list;
+            catch
+            {
+                throw new EntityNotFoundException(id, $"Product with id {id} not found");
+            }
         }
 
-        public void AddProduct(Product product)
+        public Task<IEnumerable<Product>> GetProductsAsync()
         {
-            _products.Add(product);
+            return Task.FromResult(Entries.AsEnumerable());
         }
 
-        public void DeleteProduct(Guid productId)
+        public Task<int> SaveAsync()
         {
-            var product = _products.FirstOrDefault(p => p.Id == productId);
-
-            if (product != null)
-                _products.Remove(product);
-        }
-
-        public int Save()
-        {
-            return 0;
+            return Task.FromResult(0);
         }
     }
 }

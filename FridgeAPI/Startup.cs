@@ -1,4 +1,4 @@
-using FridgeAPI.Middleware;
+using FridgeAPI.Infrastructure.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -20,10 +20,10 @@ namespace FridgeAPI
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.ConfigureDatabaseConnection();
-            services.AddAutoMapper(typeof(Startup));
-            services.ConfigureDependencyInjections();
-            services.ConfigureControllers();
+            var connectionString = Configuration.GetConnectionString("FridgeDb");
+            services.ConfigureDatabaseConnection(connectionString);
+            services.ConfigureDependencyInjection();
+            services.AddControllers();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -37,7 +37,6 @@ namespace FridgeAPI
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

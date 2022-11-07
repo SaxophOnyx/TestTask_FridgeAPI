@@ -4,22 +4,22 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:56676",
-      "sslPort": 44385
+      "applicationUrl": "http://localhost:51400",
+      "sslPort": 44377
     }
   },
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": false,
-      "launchUrl": "api/fridges",
+      "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "FridgeAPI": {
       "commandName": "Project",
-      "dotnetRunMessages": true, //кавычки
+      "dotnetRunMessages": true, //кавычки 
       "launchBrowser": true,
       "launchUrl": "swagger",
       "applicationUrl": "https://localhost:5001;http://localhost:5000",
